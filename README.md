@@ -19,9 +19,9 @@ Uma classe Employee (Funcionário) que gerencia tanto informações do funcioná
 ```csharp
 public class Employee
 {
-  public string Name { get; set; }
-  public string Position { get; set; }
-  public double Salary { get; set; }
+  public int Id { get; set; }
+  public string? Name { get; set; }
+  public float Salary { get; set; }
 
   // Método para aumentar o salário
   public void IncreaseSalary(double percentage)
@@ -35,3 +35,52 @@ public class Employee
     Console.WriteLine($"Name: {Name}, Position: {Position}, Salary: {Salary}");
   }
 }
+```
+
+### Problema
+A classe Employee tem mais de uma responsabilidade: gerenciar dados do
+funcionário e lidar com a impressão do dados.
+
+### Solução
+Separar os interesses. Cada classe deve ficar responsável por uma função específica.
+
+```csharp
+public class Employee
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public float Salary { get; set; }
+}
+
+public class EmployeeSalaryManager
+{
+    public static void IncreaseSalary(Employee employee, float percentage)
+    {
+        employee.Salary *= percentage;
+    }
+}
+
+public class EmployeePrinter
+{
+    public static void PrintAllAttributes(Employee employee)
+    {
+        Console.WriteLine($"Id: {employee.Id} | Name: {employee.Name} | Salary: {employee.Salary}");
+    }
+}
+```
+Utilização:
+```csharp
+Employee emplyee01 = new()
+{
+    Id = 1,
+    Name = "Bob Dylan",
+    Salary = 2480.0f
+};
+
+EmployeePrinter.PrintAllAttributes(emplyee01);
+EmployeeSalaryManager.IncreaseSalary(emplyee01, 1.1f);
+EmployeePrinter.PrintAllAttributes(emplyee01);
+```
+
+### Benefício
+Dessa forma o código fica separado garantindo uma melhor leitura e manutenção.

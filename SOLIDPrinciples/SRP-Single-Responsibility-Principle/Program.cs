@@ -6,8 +6,8 @@ Console.WriteLine("SRP - Single Responsability Principle.");
 Employee emplyee01 = new()
 {
     Id = 1,
-    Name = "Charler Henrique",
-    Salary = 1320.0f
+    Name = "Bob Dylan",
+    Salary = 2480.0f
 };
 
 EmployeePrinter.PrintAllAttributes(emplyee01);
