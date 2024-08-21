@@ -84,3 +84,82 @@ EmployeePrinter.PrintAllAttributes(emplyee01);
 
 ### Benefício
 Dessa forma o código fica separado garantindo uma melhor leitura e manutenção.
+
+## Open/Closed Principle (OCP)
+Princípio Aberto-Fechado
+
+_“Objetos ou entidades devem estar abertos para extensão, mas fechados para
+modificação.”_
+### Exemplo
+Uma classe AreaCalculator que calcula a área de diferentes formas
+geométricas.
+```csharp
+public class AreaCalculator
+{
+  public float CalculateRectangleArea(float width, float height)
+  {
+    return width * height;
+  }
+
+  public float CalculateCircleArea(float radius)
+  {
+    return (float) (Math.PI * Math.Pow(radius, 2));
+  }
+}
+```
+### Problema
+Cada vez que uma nova forma geométrica é adicionada, a classe AreaCalculator precisa ser modificada.
+### Solução
+Reestruturar o código utilizando os conceitos de abstração, herança e polimorfismo.
+
+```csharp
+public abstract class Shape
+{
+    public abstract float CalculateArea();
+}
+
+public static class AreaCalculator
+{
+    public static float CalculateArea(Shape shape)
+    {
+        return shape.CalculateArea();
+    }
+}
+
+public class Rectangle : Shape
+{
+    public float Width { get; set; }
+    public float Height { get; set; }
+    public override float CalculateArea()
+    {
+        return Width * Height;
+    }
+}
+
+public class Circle : Shape
+{
+    public float Radius { get; set; }
+    public override float CalculateArea()
+    {
+        return (float) (Math.PI * Math.Pow(Radius, 2));
+    }
+}
+```
+Utilização
+```csharp
+Circle circle = new()
+{
+    Radius = 10
+};
+
+Rectangle rectangle = new()
+{
+    Width = 4,
+    Height = 10
+};
+
+Console.WriteLine($"Circle Area: {AreaCalculator.CalculateArea(circle)}");
+Console.WriteLine($"Rectangle Area: {AreaCalculator.CalculateArea(rectangle)}");
+```
+### Benefício
+Novas formas geométricas podem ser adicionadas estendendo a classe Shape sem modificar a classe AreaCalculator.
