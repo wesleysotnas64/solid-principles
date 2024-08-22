@@ -163,3 +163,72 @@ Console.WriteLine($"Rectangle Area: {AreaCalculator.CalculateArea(rectangle)}");
 ```
 ### Benefício
 Novas formas geométricas podem ser adicionadas estendendo a classe Shape sem modificar a classe AreaCalculator.
+
+## Liskov Substitution Principle (LSP)
+Princípio da substituição de Liskov
+
+_“Uma classe derivada deve ser substituível por sua classe base.”_
+### Exemplo
+Uma classe Bird e uma classe derivada Penguin. Ambos são aves, porém pinguim não voa.
+```csharp
+public class Bird
+{
+    public virtual void Fly()
+    {
+        Console.WriteLine("Flying");
+    }
+}
+
+public class Penguin : Bird
+{
+    public override void Fly()
+    {
+        throw new NotImplementedException("Penguins can't fly");
+    }
+}
+```
+### Problema
+A classe Penguin não pode substituir Bird corretamente, pois lança uma exceção quando o método Fly é chamado.
+### Solução
+Utilizar polimorfismo, pois cada um deles se movimenta, mas de maneira diferente.
+```csharp
+public abstract class Bird
+{
+    public abstract string Move();
+}
+
+public class FlyingBird : Bird
+{
+    public override string Move()
+    {
+        return Fly();
+    }
+    private static string Fly()
+    {
+        return "Batendo asas";
+    }
+}
+
+public class Penguin : Bird
+{
+    public override string Move()
+    {
+        return Walk();
+    }
+
+    private static string Walk()
+    {
+        return "Caminhando";
+    }
+}
+```
+Utilização
+```csharp
+FlyingBird arara = new();
+Penguin penguin = new();
+
+Console.WriteLine($"Esta ave se move: {arara.Move()}");
+Console.WriteLine($"Esta ave se move: {penguin.Move()}");
+```
+### Benefício
+Penguin pode substituir Bird corretamente, respeitando o comportamento esperado de movimentação.
