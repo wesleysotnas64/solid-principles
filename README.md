@@ -232,3 +232,80 @@ Console.WriteLine($"Esta ave se move: {penguin.Move()}");
 ```
 ### Benefício
 Penguin pode substituir Bird corretamente, respeitando o comportamento esperado de movimentação.
+
+## Interface Segregation Principle (ISP)
+Princípio da Segregação da Interface.
+
+_“Uma classe não deve ser forçada a implementar interfaces e métodos que não utilizará.”_
+### Exemplo
+Uma interface IWorker com métodos que nem todos os trabalhadores utilizam. Um funcionário robô trabalha, assim como um funcionário humano, porém o robô não se alimenta.
+```csharp
+public interface IWorker
+{
+    void Work();
+    void Eat();
+}
+
+public class Robot : IWorker
+{
+    public void Work()
+    {
+        Console.WriteLine("Robot working");
+    }
+
+    public void Eat()
+    {
+        throw new NotImplementedException();
+    }
+}
+```
+### Problema
+A classe Robot é forçada a implementar um método que não faz sentido para ela.
+
+### Solução
+Reestruturar o código e definir interfaces com interesses específicos. Separando as interfaces, cada classe agora pode implementar apenas o que faz sentido para ela.
+
+```csharp
+public interface IWorkable
+{
+    public void Work();
+}
+
+public interface IFeedable
+{
+    public void Eat();
+}
+
+public class Human : IWorkable, IFeedable
+{
+    public void Work()
+    {
+        Console.WriteLine("Human working!");
+    }
+
+    public void Eat()
+    {
+        Console.WriteLine("Human eating!");
+    }
+}
+
+public class Robot : IWorkable
+{
+    public void Work()
+    {
+        Console.WriteLine("Robot working!");
+    }
+}
+```
+Utilização
+```csharp
+Human human = new();
+Robot robot = new();
+
+human.Work();
+human.Eat();
+robot.Work();
+//robot.Eat(); // Acesso impossível, pois o robô não come
+```
+### Benefício
+Cada classe implementa apenas as interfaces que fazem sentido para ela, evitando métodos não utilizados.
