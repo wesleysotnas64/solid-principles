@@ -309,3 +309,132 @@ robot.Work();
 ```
 ### Benefício
 Cada classe implementa apenas as interfaces que fazem sentido para ela, evitando métodos não utilizados.
+
+## Dependency Inversion Principle (DIP)
+Princípio da Inversão de Dependência.
+
+_“Dependa de abstrações e não de implementações.”_
+### Exemplo
+Uma classe Light que depende diretamente de uma classe Switch (interruptor).
+```csharp
+public class Light
+{
+    public void TurnOn()
+    {
+        Console.WriteLine("Light is on");
+    }
+
+    public void TurnOff()
+    {
+        Console.WriteLine("Light is off");
+    }
+}
+
+public class Switch
+{
+    private Light _light;
+
+    public Switch(Light light)
+    {
+        _light = light;
+    }
+
+    public void Operate(bool on)
+    {
+        if (on)
+            _light.TurnOn();
+        else
+            _light.TurnOff();
+    }
+}
+```
+### Problema
+A classe Switch depende diretamente da classe Light, ou seja, o interruptor liga apenas luzes, onde na verdade a função de um interruptor é fechar e abrir o circuito, podendo ligar/desligar qualquer tipo de dispositivo com essa característica.
+
+### Solução
+Neste caso, o ideal é implementar um mediador (interface), onde qualquer dispositivo que seja possível alternar entre ligado e desligado pode ser controlado pelo interruptor.
+
+```csharp
+public interface ISwitchable
+{
+    void TurnOn();
+    void TurnOff();
+}
+
+public abstract class SwitchableDevice : ISwitchable
+{
+    public bool IsOn { get; protected set; }
+
+    protected SwitchableDevice() => IsOn = false;
+
+    public abstract void TurnOn();
+    public abstract void TurnOff();
+}
+
+public class Light : SwitchableDevice
+{
+    public override void TurnOn()
+    {
+        IsOn = true;
+        Console.WriteLine("The Light is on!");
+    }
+
+    public override void TurnOff()
+    {
+        Console.WriteLine("The Light is off!");
+        IsOn = false;
+    }
+}
+
+public class Fireplace : SwitchableDevice
+{
+    public override void TurnOn()
+    {
+        IsOn = true;
+        Console.WriteLine("The Fireplace is on!");
+    }
+    public override void TurnOff()
+    {
+        IsOn = true;
+        Console.WriteLine("The Fireplace is off!");
+    }
+}
+
+public class Switch
+{
+    public ISwitchable? Device { get; private set; }
+
+    public Switch(ISwitchable _device) => SetDevice(_device);
+
+    public void SetDevice(ISwitchable _device)
+    {
+        Device = _device;
+    }
+
+    public void Operate(bool _on)
+    {
+        if (Device != null)
+        {
+            if (_on) Device.TurnOn();
+            else Device.TurnOff();
+        }
+    }
+}
+```
+Utilização
+```csharp
+ISwitchable ligth = new Light();
+ISwitchable fireplace = new Fireplace();
+
+Switch _switch = new(ligth);
+
+_switch.Operate(true);
+_switch.Operate(false);
+
+_switch.SetDevice(fireplace);
+
+_switch.Operate(true);
+_switch.Operate(false);
+```
+### Benefício
+A classe Switch depende de uma abstração (ISwitchable), não de uma implementação concreta (Light), facilitando a substituição de dispositivos
